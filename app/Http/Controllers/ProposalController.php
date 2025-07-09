@@ -13,7 +13,7 @@ class ProposalController extends Controller
      */
     public function index()
     {
-        //
+        return Proposal::all();
     }
 
     /**
