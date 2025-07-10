@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Tag;
 use App\Http\Requests\V1\StoreTagRequest;
 use App\Http\Requests\V1\UpdateTagRequest;
+use App\Http\Resources\V1\TagCollection;
+use App\Http\Resources\V1\TagResources;
 
 class TagController extends Controller
 {
@@ -14,7 +16,10 @@ class TagController extends Controller
      */
     public function index()
     {
-        return Tag::all();
+        $tag = Tag::all();
+        return new TagCollection($tag);
+
+        // return Tag::all();
     }
 
     /**
@@ -38,7 +43,7 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        //
+        return new TagResources($tag);
     }
 
     /**

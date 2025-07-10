@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Http\Requests\V1\StoreProjectRequest;
 use App\Http\Requests\V1\UpdateProjectRequest;
+use App\Http\Resources\V1\ProjectCollection;
+use App\Http\Resources\V1\ProjectResources;
 
 class ProjectController extends Controller
 {
@@ -14,7 +16,10 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return Project::all();
+        $project = Project::all();
+        return new ProjectCollection($project);
+
+        // return Project::all();
     }
 
     /**
@@ -38,7 +43,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return new ProjectResources($project);
     }
 
     /**

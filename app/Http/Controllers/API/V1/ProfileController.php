@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Profile;
 use App\Http\Requests\V1\StoreProfileRequest;
 use App\Http\Requests\V1\UpdateProfileRequest;
+use App\Http\Resources\V1\ProfileCollection;
+use App\Http\Resources\V1\ProfileResources;
 
 class ProfileController extends Controller
 {
@@ -14,7 +16,10 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return Profile::all();
+        $profile = Profile::all();
+        return new ProfileCollection($profile);
+
+        // return Profile::all();
     }
 
     /**
@@ -38,7 +43,7 @@ class ProfileController extends Controller
      */
     public function show(Profile $profile)
     {
-        //
+        return new ProfileResources($profile);
     }
 
     /**

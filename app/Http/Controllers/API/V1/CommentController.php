@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Http\Requests\V1\StoreCommentRequest;
 use App\Http\Requests\V1\UpdateCommentRequest;
+use App\Http\Resources\V1\CommentCollection;
+use App\Http\Resources\V1\CommentResources;
 
 class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Comment::all();
+        $comment = Comment::all();
+        return new CommentCollection($comment);
+
+        // return Comment::all();
     }
 
     /**
@@ -38,7 +44,7 @@ class CommentController extends Controller
      */
     public function show(Comment $comment)
     {
-        //
+        return new CommentResources($comment);
     }
 
     /**

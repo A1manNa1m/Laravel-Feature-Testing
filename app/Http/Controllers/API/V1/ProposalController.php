@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Proposal;
 use App\Http\Requests\V1\StoreProposalRequest;
 use App\Http\Requests\V1\UpdateProposalRequest;
+use App\Http\Resources\V1\ProposalCollection;
+use App\Http\Resources\V1\ProposalResources;
 
 class ProposalController extends Controller
 {
@@ -14,7 +16,10 @@ class ProposalController extends Controller
      */
     public function index()
     {
-        return Proposal::all();
+        $proposal = Proposal::all();
+        return new ProposalCollection($proposal);
+
+        // return Proposal::all();
     }
 
     /**
@@ -38,7 +43,7 @@ class ProposalController extends Controller
      */
     public function show(Proposal $proposal)
     {
-        //
+        return new ProposalResources($proposal);
     }
 
     /**

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Skill;
 use App\Http\Requests\V1\StoreSkillRequest;
 use App\Http\Requests\V1\UpdateSkillRequest;
+use App\Http\Resources\V1\SkillCollection;
+use App\Http\Resources\V1\SkillResources;
 
 class SkillController extends Controller
 {
@@ -14,7 +16,10 @@ class SkillController extends Controller
      */
     public function index()
     {
-        return Skill::all();
+        $skill = Skill::all();
+        return new SkillCollection($skill);
+
+        // return Skill::all();
     }
 
     /**
@@ -38,7 +43,7 @@ class SkillController extends Controller
      */
     public function show(Skill $skill)
     {
-        //
+        return new SkillResources($skill);
     }
 
     /**

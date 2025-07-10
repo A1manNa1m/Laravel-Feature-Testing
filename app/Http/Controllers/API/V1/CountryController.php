@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Http\Requests\V1\StoreCountryRequest;
 use App\Http\Requests\V1\UpdateCountryRequest;
+use App\Http\Resources\V1\CountryCollection;
+use App\Http\Resources\V1\CountryResources;
 use Illuminate\Http\Request;
 
 class CountryController extends Controller
@@ -15,7 +17,10 @@ class CountryController extends Controller
      */
     public function index(Request $request)
     {
-        return Country::all();
+        $country = Country::all();
+        return new CountryCollection($country);
+        
+        // return Country::all();
     }
 
     /**
@@ -39,7 +44,7 @@ class CountryController extends Controller
      */
     public function show(Country $country)
     {
-        //
+        return new CountryResources($country);
     }
 
     /**
