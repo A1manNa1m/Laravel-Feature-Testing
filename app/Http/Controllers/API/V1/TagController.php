@@ -35,7 +35,7 @@ class TagController extends Controller
      */
     public function store(StoreTagRequest $request)
     {
-        //
+        return new TagResources(Tag::create($request->all()));
     }
 
     /**

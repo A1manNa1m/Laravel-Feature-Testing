@@ -35,7 +35,7 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        return new ProjectResources(Project::create($request->all()));
     }
 
     /**

@@ -22,7 +22,9 @@ class StoreProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => ['required','integer'],
+            'bio' => ['required','string'],
+            'profile_image' => ['required','string'],
         ];
     }
 }

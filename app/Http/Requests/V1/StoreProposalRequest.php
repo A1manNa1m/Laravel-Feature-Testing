@@ -22,7 +22,9 @@ class StoreProposalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => ['required','integer'],
+            'project_id' => ['required','string'],
+            'cover_letter' => ['required','string'],
         ];
     }
 }

@@ -36,7 +36,7 @@ class CountryController extends Controller
      */
     public function store(StoreCountryRequest $request)
     {
-        //
+        return new CountryResources(Country::create($request->all()));
     }
 
     /**

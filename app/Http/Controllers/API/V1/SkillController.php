@@ -35,7 +35,7 @@ class SkillController extends Controller
      */
     public function store(StoreSkillRequest $request)
     {
-        //
+        return new SkillResources(Skill::create($request->all()));
     }
 
     /**

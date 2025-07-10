@@ -35,7 +35,7 @@ class ProfileController extends Controller
      */
     public function store(StoreProfileRequest $request)
     {
-        //
+        return new ProfileResources(Profile::create($request->all()));
     }
 
     /**

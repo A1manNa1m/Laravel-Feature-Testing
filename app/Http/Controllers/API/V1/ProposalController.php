@@ -35,7 +35,7 @@ class ProposalController extends Controller
      */
     public function store(StoreProposalRequest $request)
     {
-        //
+        return new ProposalResources(Proposal::create($request->all()));
     }
 
     /**
