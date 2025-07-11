@@ -67,6 +67,6 @@ class ProposalController extends Controller
      */
     public function destroy(Proposal $proposal)
     {
-        //
+        $proposal->delete();
     }
 }
