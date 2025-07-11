@@ -11,7 +11,7 @@ class UpdateProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,19 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        $method = $this->method();
+        if($method == 'PUT'){
+            return [
+                'user_id' => ['required','integer'],
+                'bio' => ['required','string'],
+                'profile_image' => ['required','string'],
+            ];
+        }else{
+            return [
+                'user_id' => ['sometimes','required','integer'],
+                'bio' => ['sometimes','required','string'],
+                'profile_image' => ['sometimes','required','string'],
+            ];
+        }
     }
 }

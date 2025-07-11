@@ -59,7 +59,7 @@ class SkillController extends Controller
      */
     public function update(UpdateSkillRequest $request, Skill $skill)
     {
-        //
+        $skill->update($request->all());
     }
 
     /**

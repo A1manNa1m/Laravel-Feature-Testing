@@ -59,7 +59,7 @@ class ProposalController extends Controller
      */
     public function update(UpdateProposalRequest $request, Proposal $proposal)
     {
-        //
+        $proposal->update($request->all());
     }
 
     /**

@@ -11,7 +11,7 @@ class StoreProposalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,7 @@ class StoreProposalRequest extends FormRequest
     {
         return [
             'user_id' => ['required','integer'],
-            'project_id' => ['required','string'],
+            'project_id' => ['required','integer'],
             'cover_letter' => ['required','string'],
         ];
     }

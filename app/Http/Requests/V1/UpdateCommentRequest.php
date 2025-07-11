@@ -11,7 +11,7 @@ class UpdateCommentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,21 @@ class UpdateCommentRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        $method = $this->method();
+        if($method == 'PUT'){
+            return [
+                'user_id' => ['required','integer'],
+                'commentable_id' => ['required','integer'],
+                'commentable_type' => ['required','string'],
+                'body' => ['required','string'],
+            ];
+        }else{
+            return [
+                'user_id' => ['sometimes','required','integer'],
+                'commentable_id' => ['sometimes','required','integer'],
+                'commentable_type' => ['sometimes','required','string'],
+                'body' => ['sometimes','required','string'],
+            ];
+        }
     }
 }

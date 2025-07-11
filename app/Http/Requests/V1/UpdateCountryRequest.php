@@ -11,7 +11,7 @@ class UpdateCountryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,15 @@ class UpdateCountryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        $method = $this->method();
+        if($method == 'PUT'){
+            return [
+                'name' => ['required', 'string'],
+            ];
+        }else{
+            return [
+                'name' => ['sometimes','required', 'string'],
+            ];
+        }
     }
 }

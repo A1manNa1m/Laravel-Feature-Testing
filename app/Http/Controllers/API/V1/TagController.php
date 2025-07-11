@@ -59,7 +59,7 @@ class TagController extends Controller
      */
     public function update(UpdateTagRequest $request, Tag $tag)
     {
-        //
+        $tag->update($request->all());
     }
 
     /**

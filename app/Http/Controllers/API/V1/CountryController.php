@@ -60,7 +60,7 @@ class CountryController extends Controller
      */
     public function update(UpdateCountryRequest $request, Country $country)
     {
-        //
+        $country->update($request->all());
     }
 
     /**
