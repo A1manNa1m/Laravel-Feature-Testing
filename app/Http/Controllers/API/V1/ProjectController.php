@@ -8,14 +8,19 @@ use App\Http\Requests\V1\StoreProjectRequest;
 use App\Http\Requests\V1\UpdateProjectRequest;
 use App\Http\Resources\V1\ProjectCollection;
 use App\Http\Resources\V1\ProjectResources;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if (!$request->user()->tokenCan('read')) {
+        abort(403, 'Unauthorized');
+        }
+
         $project = Project::all();
         return new ProjectCollection($project);
 
@@ -67,6 +72,12 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        $user = request()->user();
+
+        if (!$user || !$user->tokenCan('delete')) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $project->delete();
     }
 }

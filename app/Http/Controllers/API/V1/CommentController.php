@@ -17,6 +17,10 @@ class CommentController extends Controller
      */
     public function index(Request $request)
     {
+        if (!$request->user()->tokenCan('read')) {
+        abort(403, 'Unauthorized');
+        }
+        
         $comment = Comment::all();
         return new CommentCollection($comment);
 
@@ -69,6 +73,12 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
+        $user = request()->user();
+
+        if (!$user || !$user->tokenCan('delete')) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $comment->delete();
     }
 }

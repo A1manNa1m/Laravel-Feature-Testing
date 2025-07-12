@@ -8,14 +8,19 @@ use App\Http\Requests\V1\StoreSkillRequest;
 use App\Http\Requests\V1\UpdateSkillRequest;
 use App\Http\Resources\V1\SkillCollection;
 use App\Http\Resources\V1\SkillResources;
+use Illuminate\Http\Request;
 
 class SkillController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if (!$request->user()->tokenCan('read')) {
+        abort(403, 'Unauthorized');
+        }
+
         $skill = Skill::all();
         return new SkillCollection($skill);
 
@@ -67,6 +72,12 @@ class SkillController extends Controller
      */
     public function destroy(Skill $skill)
     {
+        $user = request()->user();
+
+        if (!$user || !$user->tokenCan('delete')) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $skill->delete();
     }
 }

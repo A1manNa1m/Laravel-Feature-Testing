@@ -8,14 +8,19 @@ use App\Http\Requests\V1\StoreTagRequest;
 use App\Http\Requests\V1\UpdateTagRequest;
 use App\Http\Resources\V1\TagCollection;
 use App\Http\Resources\V1\TagResources;
+use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if (!$request->user()->tokenCan('read')) {
+        abort(403, 'Unauthorized');
+        }
+
         $tag = Tag::all();
         return new TagCollection($tag);
 
@@ -67,6 +72,12 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
+        $user = request()->user();
+
+        if (!$user || !$user->tokenCan('delete')) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $tag->delete();
     }
 }

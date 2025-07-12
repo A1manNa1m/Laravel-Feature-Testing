@@ -17,6 +17,10 @@ class CountryController extends Controller
      */
     public function index(Request $request)
     {
+        if (!$request->user()->tokenCan('read')) {
+        abort(403, 'Unauthorized');
+        }
+        
         $country = Country::all();
         return new CountryCollection($country);
         
@@ -68,6 +72,12 @@ class CountryController extends Controller
      */
     public function destroy(Country $country)
     {
+        $user = request()->user();
+
+        if (!$user || !$user->tokenCan('delete')) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $country->delete();
     }
 }

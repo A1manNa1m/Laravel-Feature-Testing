@@ -8,14 +8,19 @@ use App\Http\Requests\V1\StoreProfileRequest;
 use App\Http\Requests\V1\UpdateProfileRequest;
 use App\Http\Resources\V1\ProfileCollection;
 use App\Http\Resources\V1\ProfileResources;
+use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if (!$request->user()->tokenCan('read')) {
+        abort(403, 'Unauthorized');
+        }
+
         $profile = Profile::all();
         return new ProfileCollection($profile);
 
@@ -67,6 +72,12 @@ class ProfileController extends Controller
      */
     public function destroy(Profile $profile)
     {
+        $user = request()->user();
+
+        if (!$user || !$user->tokenCan('delete')) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $profile->delete();
     }
 }

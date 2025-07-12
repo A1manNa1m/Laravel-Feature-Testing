@@ -8,14 +8,19 @@ use App\Http\Requests\V1\StoreProposalRequest;
 use App\Http\Requests\V1\UpdateProposalRequest;
 use App\Http\Resources\V1\ProposalCollection;
 use App\Http\Resources\V1\ProposalResources;
+use Illuminate\Http\Request;
 
 class ProposalController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if (!$request->user()->tokenCan('read')) {
+        abort(403, 'Unauthorized');
+        }
+
         $proposal = Proposal::all();
         return new ProposalCollection($proposal);
 
@@ -67,6 +72,12 @@ class ProposalController extends Controller
      */
     public function destroy(Proposal $proposal)
     {
+        $user = request()->user();
+
+        if (!$user || !$user->tokenCan('delete')) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $proposal->delete();
     }
 }
