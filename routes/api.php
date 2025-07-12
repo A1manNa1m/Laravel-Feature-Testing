@@ -34,8 +34,9 @@ Route::prefix('v1')->namespace('App\Http\Controllers\API\V1')->group(function ()
 
 
 // Protected Routes (require auth:sanctum)
+// Including token expiry checking
 //api/v1
-Route::group(['prefix'=>'v1', 'namespace'=>'App\Http\Controllers\API\V1','middleware'=>'auth:sanctum'], function(){
+Route::group(['prefix'=>'v1', 'namespace'=>'App\Http\Controllers\API\V1','middleware'=>['auth:sanctum','check.token.expiry']], function(){
     Route::resource('country', CountryController::class);
     Route::resource('comment', CommentController::class);
     Route::resource('profile', ProfileController::class);

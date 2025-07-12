@@ -19,6 +19,11 @@ class AuthController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
 
+        // Set token expiry to 1 day (or whatever you prefer)
+        $user->tokens()->latest()->first()->update([
+            'expires_at' => now()->addDays(1),
+        ]);
+        
         return response()->json(['token' => $token], 200);
     }
 
