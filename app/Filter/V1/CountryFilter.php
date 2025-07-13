@@ -7,11 +7,7 @@ use App\Filter\ApiFilter;
 class CountryFilter extends ApiFilter {
 
     protected $safeParams = [
-        '' => ['eq'],
-        '' => ['eq','lt','lte','gt','gte'],
-        '' => ['eq','ne'],
-        '' => ['eq','lt','lte','gt','gte'],
-        '' => ['eq','lt','lte','gt','gte']
+        'name' => ['eq','ne'],
     ];
 
     protected $columnMap = [

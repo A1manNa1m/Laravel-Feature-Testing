@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Filter\V1\ProjectFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Http\Requests\V1\StoreProjectRequest;
@@ -21,8 +22,15 @@ class ProjectController extends Controller
         abort(403, 'Unauthorized');
         }
 
-        $project = Project::all();
-        return new ProjectCollection($project);
+        $filter = new ProjectFilter();
+        $filterItem = $filter->transform($request); //[['column','operator','value']]
+
+        $result = Project::where($filterItem);
+
+        return new ProjectCollection($result->paginate()->appends($request->query()));
+
+        // $project = Project::all();
+        // return new ProjectCollection($project);
 
         // return Project::all();
     }

@@ -50,7 +50,7 @@ Route::group(['prefix'=>'v1', 'namespace'=>'App\Http\Controllers\API\V1','middle
 });
 
 
-//SIMPLE WAY TO MAKE ROUTE, No need v1,v2 and etc
+//SIMPLE WAY TO MAKE ROUTE
 // api/??
 // Route::namespace('App\Http\Controllers')->group(function () {
 //     Route::resource('country', CountryController::class);

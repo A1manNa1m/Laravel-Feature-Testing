@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Filter\V1\CountryFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Http\Requests\V1\StoreCountryRequest;
@@ -21,8 +22,15 @@ class CountryController extends Controller
         abort(403, 'Unauthorized');
         }
         
-        $country = Country::all();
-        return new CountryCollection($country);
+        $filter = new CountryFilter();
+        $filterItem = $filter->transform($request); //[['column','operator','value']]
+
+        $result = Country::where($filterItem);
+
+        return new CountryCollection($result->paginate()->appends($request->query()));
+        
+        // $country = Country::all();
+        // return new CountryCollection($country);
         
         // return Country::all();
     }

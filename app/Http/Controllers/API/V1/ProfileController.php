@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Filter\V1\ProfileFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Profile;
 use App\Http\Requests\V1\StoreProfileRequest;
@@ -21,8 +22,15 @@ class ProfileController extends Controller
         abort(403, 'Unauthorized');
         }
 
-        $profile = Profile::all();
-        return new ProfileCollection($profile);
+        $filter = new ProfileFilter();
+        $filterItem = $filter->transform($request); //[['column','operator','value']]
+
+        $result = Profile::where($filterItem);
+
+        return new ProfileCollection($result->paginate()->appends($request->query()));
+
+        // $profile = Profile::all();
+        // return new ProfileCollection($profile);
 
         // return Profile::all();
     }

@@ -7,11 +7,9 @@ use App\Filter\ApiFilter;
 class ProposalFilter extends ApiFilter {
 
     protected $safeParams = [
-        '' => ['eq'],
-        '' => ['eq','lt','lte','gt','gte'],
-        '' => ['eq','ne'],
-        '' => ['eq','lt','lte','gt','gte'],
-        '' => ['eq','lt','lte','gt','gte']
+        'user_id' => ['eq'],
+        'project_id' => ['eq'],
+        'cover_letter' => ['eq','ne'],
     ];
 
     protected $columnMap = [

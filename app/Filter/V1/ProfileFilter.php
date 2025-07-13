@@ -7,11 +7,7 @@ use App\Filter\ApiFilter;
 class ProfileFilter extends ApiFilter {
 
     protected $safeParams = [
-        '' => ['eq'],
-        '' => ['eq','lt','lte','gt','gte'],
-        '' => ['eq','ne'],
-        '' => ['eq','lt','lte','gt','gte'],
-        '' => ['eq','lt','lte','gt','gte']
+        'user_id' => ['eq'],
     ];
 
     protected $columnMap = [

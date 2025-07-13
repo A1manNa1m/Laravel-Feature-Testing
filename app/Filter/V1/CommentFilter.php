@@ -7,11 +7,10 @@ use App\Filter\ApiFilter;
 class CommentFilter extends ApiFilter {
 
     protected $safeParams = [
-        '' => ['eq'],
-        '' => ['eq','lt','lte','gt','gte'],
-        '' => ['eq','ne'],
-        '' => ['eq','lt','lte','gt','gte'],
-        '' => ['eq','lt','lte','gt','gte']
+        'user_id' => ['eq'],
+        'commentable_id' => ['eq','ne'],
+        'commentable_type' => ['eq','ne'],
+        'body' => ['eq','ne'],
     ];
 
     protected $columnMap = [

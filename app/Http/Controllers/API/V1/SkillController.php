@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Filter\V1\SkillFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Skill;
 use App\Http\Requests\V1\StoreSkillRequest;
@@ -21,8 +22,15 @@ class SkillController extends Controller
         abort(403, 'Unauthorized');
         }
 
-        $skill = Skill::all();
-        return new SkillCollection($skill);
+        $filter = new SkillFilter();
+        $filterItem = $filter->transform($request); //[['column','operator','value']]
+
+        $result = Skill::where($filterItem);
+
+        return new SkillCollection($result->paginate()->appends($request->query()));
+
+        // $skill = Skill::all();
+        // return new SkillCollection($skill);
 
         // return Skill::all();
     }

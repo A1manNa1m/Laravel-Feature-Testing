@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Filter\V1\CommentFilter;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
@@ -21,8 +22,15 @@ class CommentController extends Controller
         abort(403, 'Unauthorized');
         }
         
-        $comment = Comment::all();
-        return new CommentCollection($comment);
+        $filter = new CommentFilter();
+        $filterItem = $filter->transform($request); //[['column','operator','value']]
+
+        $result = Comment::where($filterItem);
+
+        return new CommentCollection($result->paginate()->appends($request->query()));
+
+        // $comment = Comment::all();
+        // return new CommentCollection($comment);
 
         // return Comment::all();
     }

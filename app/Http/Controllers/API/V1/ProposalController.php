@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Filter\V1\ProposalFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Proposal;
 use App\Http\Requests\V1\StoreProposalRequest;
@@ -21,8 +22,15 @@ class ProposalController extends Controller
         abort(403, 'Unauthorized');
         }
 
-        $proposal = Proposal::all();
-        return new ProposalCollection($proposal);
+        $filter = new ProposalFilter();
+        $filterItem = $filter->transform($request); //[['column','operator','value']]
+
+        $result = Proposal::where($filterItem);
+
+        return new ProposalCollection($result->paginate()->appends($request->query()));
+
+        // $proposal = Proposal::all();
+        // return new ProposalCollection($proposal);
 
         // return Proposal::all();
     }
