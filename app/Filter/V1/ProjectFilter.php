@@ -8,8 +8,8 @@ class ProjectFilter extends ApiFilter {
 
     protected $safeParams = [
         'user_id' => ['eq'],
-        'title' => ['eq','ne'],
-        'description' => ['eq','ne'],
+        'title' => ['like'],
+        'description' => ['like'],
     ];
 
     protected $columnMap = [
@@ -24,6 +24,7 @@ class ProjectFilter extends ApiFilter {
         'lte' => '<=',
         'gt' => '>',
         'gte' => '>=',
-        'ne' => '!='
+        'ne' => '!=',
+        'like' => 'LIKE'
     ];
 }

@@ -7,7 +7,7 @@ use App\Filter\ApiFilter;
 class SkillFilter extends ApiFilter {
 
     protected $safeParams = [
-        'name' => ['eq','ne'],
+        'name' => ['eq','ne','like'],
     ];
 
     protected $columnMap = [
@@ -22,6 +22,7 @@ class SkillFilter extends ApiFilter {
         'lte' => '<=',
         'gt' => '>',
         'gte' => '>=',
-        'ne' => '!='
+        'ne' => '!=',
+        'like' => 'LIKE'
     ];
 }

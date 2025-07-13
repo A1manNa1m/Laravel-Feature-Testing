@@ -9,7 +9,7 @@ class ProposalFilter extends ApiFilter {
     protected $safeParams = [
         'user_id' => ['eq'],
         'project_id' => ['eq'],
-        'cover_letter' => ['eq','ne'],
+        'cover_letter' => ['like'],
     ];
 
     protected $columnMap = [
@@ -24,6 +24,7 @@ class ProposalFilter extends ApiFilter {
         'lte' => '<=',
         'gt' => '>',
         'gte' => '>=',
-        'ne' => '!='
+        'ne' => '!=',
+        'like' => 'LIKE'
     ];
 }

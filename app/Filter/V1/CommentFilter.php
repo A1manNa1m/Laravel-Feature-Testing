@@ -10,7 +10,7 @@ class CommentFilter extends ApiFilter {
         'user_id' => ['eq'],
         'commentable_id' => ['eq','ne'],
         'commentable_type' => ['eq','ne'],
-        'body' => ['eq','ne'],
+        'body' => ['eq','ne','like'],
     ];
 
     protected $columnMap = [
@@ -25,6 +25,7 @@ class CommentFilter extends ApiFilter {
         'lte' => '<=',
         'gt' => '>',
         'gte' => '>=',
-        'ne' => '!='
+        'ne' => '!=',
+        'like' => 'LIKE'
     ];
 }

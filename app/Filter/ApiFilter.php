@@ -25,7 +25,11 @@ class ApiFilter {
 
             foreach ($operators as $operator){
                 if(isset($query[$operator])){
-                    $eloQuery[]= [$column, $this->operatorMap[$operator], $query[$operator]];
+                    $value = $query[$operator];
+                    if ($this->operatorMap[$operator] === 'LIKE') {
+                        $value = "%$value%"; // Add wildcard for partial match
+                    }
+                    $eloQuery[]= [$column, $this->operatorMap[$operator], $value];
                 }
             }
         }

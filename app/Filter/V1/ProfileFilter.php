@@ -8,6 +8,7 @@ class ProfileFilter extends ApiFilter {
 
     protected $safeParams = [
         'user_id' => ['eq'],
+        'bio' => ['like']
     ];
 
     protected $columnMap = [
@@ -22,6 +23,7 @@ class ProfileFilter extends ApiFilter {
         'lte' => '<=',
         'gt' => '>',
         'gte' => '>=',
-        'ne' => '!='
+        'ne' => '!=',
+        'like' => 'LIKE'
     ];
 }
