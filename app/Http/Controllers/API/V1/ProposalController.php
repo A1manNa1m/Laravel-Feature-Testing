@@ -87,5 +87,7 @@ class ProposalController extends Controller
         }
 
         $proposal->delete();
+        return response()->noContent();
+        // return response()->json(['message' => 'Deleted'], 200);
     }
 }

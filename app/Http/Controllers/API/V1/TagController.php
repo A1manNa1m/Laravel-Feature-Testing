@@ -79,5 +79,7 @@ class TagController extends Controller
         }
 
         $tag->delete();
+        return response()->noContent();
+        // return response()->json(['message' => 'Deleted'], 200);
     }
 }

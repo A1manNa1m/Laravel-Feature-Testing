@@ -87,5 +87,8 @@ class CountryController extends Controller
         }
 
         $country->delete();
+        return response()->noContent();
+        // return response()->json(['message' => 'Deleted'], 200);
+
     }
 }

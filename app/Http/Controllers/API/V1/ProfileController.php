@@ -87,5 +87,7 @@ class ProfileController extends Controller
         }
 
         $profile->delete();
+        return response()->noContent();
+        // return response()->json(['message' => 'Deleted'], 200);
     }
 }

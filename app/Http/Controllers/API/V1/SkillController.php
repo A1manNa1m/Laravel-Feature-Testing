@@ -87,5 +87,7 @@ class SkillController extends Controller
         }
 
         $skill->delete();
+        return response()->noContent();
+        // return response()->json(['message' => 'Deleted'], 200);
     }
 }
