@@ -26,6 +26,7 @@ class StoreProjectRequest extends FormRequest
             'user_id' => ['required','integer'],
             'title' => ['required','string'],
             'description' => ['required','string'],
+            'objective' => ['nullable','string'],
         ];
     }
 }

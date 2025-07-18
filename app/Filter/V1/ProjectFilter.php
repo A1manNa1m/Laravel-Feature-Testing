@@ -10,6 +10,7 @@ class ProjectFilter extends ApiFilter {
         'user_id' => ['eq'],
         'title' => ['like'],
         'description' => ['like'],
+        'objective' => ['like'],
     ];
 
     protected $columnMap = [

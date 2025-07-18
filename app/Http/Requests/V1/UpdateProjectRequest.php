@@ -28,12 +28,14 @@ class UpdateProjectRequest extends FormRequest
                 'user_id' => ['required','integer'],
                 'title' => ['required','string'],
                 'description' => ['required','string'],
+                'objective' => ['nullable','string'],
             ];
         }else{
             return [
                 'user_id' => ['sometimes','required','integer'],
                 'title' => ['sometimes','required','string'],
                 'description' => ['sometimes','required','string'],
+                'objective' => ['nullable','string'],
             ];
         }
     }
