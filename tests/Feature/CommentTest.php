@@ -29,231 +29,205 @@ class CommentTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_authenticated_user_can_create_comment_on_project()
+    public function test_authenticated_user_can_create_comment()
     {
         $user = User::factory()->create();
-        $project = Project::factory()->create();
-
-        Sanctum::actingAs($user,['create']);
-
-        $data = [
-            'user_id'=>$user->id,
-            'commentable_id'=>$project->id,
-            'commentable_type'=>Project::class,
-            'body'=>'Comment on project',
+        Sanctum::actingAs($user, ['create']); //token
+        
+        $models = [
+            [Project::class, 'project'],
+            [Proposal::class, 'proposal'],
         ];
 
-        $response = $this->postJson('/api/v1/comment',$data);
-        $response->assertStatus(201);
+        foreach ($models as [$modelClass, $type]) {
+            $model = $modelClass::factory()->create();
+            
+            $response = $this->postJson('/api/v1/comment', [
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Comment on {$type}",
+            ]);
 
-        $this->assertDatabaseHas('comments', [
-            'user_id'=>$user->id,
-            'commentable_id'=>$project->id,
-            'commentable_type'=>Project::class,
-            'body'=>'Comment on project',
-        ]);
+            $response->assertStatus(201); // Created
+            $this->assertDatabaseHas('comments', [
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Comment on {$type}",
+            ]);
+        }
     }
 
-    public function test_authenticated_user_can_create_comment_on_proposal()
+    public function test_it_creates_a_comment_when_all_fields_are_valid()
     {
         $user = User::factory()->create();
-        $proposal = Proposal::factory()->create();
-
-        Sanctum::actingAs($user,['create']);
-
-        $data = [
-            'user_id'=>$user->id,
-            'commentable_id'=>$proposal->id,
-            'commentable_type'=>Proposal::class,
-            'body'=>'Comment on proposal',
+        Sanctum::actingAs($user, ['create']); //token
+        
+        $models = [
+            [Project::class, 'project'],
+            [Proposal::class, 'proposal'],
         ];
 
-        $response = $this->postJson('/api/v1/comment',$data);
-        $response->assertStatus(201);
+        foreach ($models as [$modelClass, $type]) {
+            $model = $modelClass::factory()->create();
+            
+            $response = $this->postJson('/api/v1/comment', [
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Comment on {$type}",
+            ]);
 
-        $this->assertDatabaseHas('comments', [
-            'user_id'=>$user->id,
-            'commentable_id'=>$proposal->id,
-            'commentable_type'=>Proposal::class,
-            'body'=>'Comment on proposal',
-        ]);
+            $response->assertStatus(201); // Created
+            $this->assertDatabaseHas('comments', [
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Comment on {$type}",
+            ]);
+        }
     }
 
-    public function test_authenticated_user_can_update_comment_on_project_via_put_method()
+    public function test_it_returns_validation_errors_when_required_fields_are_missing()
     {
         $user = User::factory()->create();
-        $project = Project::factory()->create();
+        Sanctum::actingAs($user, ['create']); //token
 
+        $models = [
+            [Project::class, 'project'],
+            [Proposal::class, 'proposal'],
+        ];
+
+        $requiredFields = ['user_id', 'commentable_id','commentable_type','body'];
+
+        foreach ($models as [$modelClass, $type]) {
+
+            $model = $modelClass::factory()->create();
+
+            foreach ($requiredFields as $field) {
+                $data = [
+                    'user_id'=>$user->id,
+                    'commentable_id'=>$model->id,
+                    'commentable_type'=>$modelClass,
+                    'body'=>"Comment on {$type}",
+                ];
+
+                unset($data[$field]); // Remove the required field we’re testing
+
+                $response = $this->postJson('/api/v1/comment', $data);
+
+                $response->assertStatus(422);
+                $response->assertJsonValidationErrors($field);
+            }
+        }
+    }
+
+    public function test_authenticated_user_can_update_comment_via_put_method()
+    {
+        $user = User::factory()->create();
         Sanctum::actingAs($user, ['update']);
 
-        $comment = Comment::factory()->create([
-            'user_id'=>$user->id,
-            'commentable_id'=>$project->id,
-            'commentable_type'=>Project::class,
-            'body'=>'Comment on project',
-        ]);
-
-        $data = [
-            'user_id'=>$user->id,
-            'commentable_id'=>$project->id,
-            'commentable_type'=>Project::class,
-            'body'=>'Modification comment here',
+        $models = [
+            [Project::class, 'project'],
+            [Proposal::class, 'proposal'],
         ];
 
-        $response = $this->putJson("/api/v1/comment/{$comment->id}", $data);
+        foreach ($models as [$modelClass, $type]) {
+            $model = $modelClass::factory()->create();
+            
+            $comment = Comment::factory()->create([
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Comment on {$type}",
+            ]);
 
-        $response->assertStatus(200);
+            $data = [
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Modification comment on {$type}",
+            ];
 
-        $this->assertDatabaseHas('comments', [
-            'user_id'=>$user->id,
-            'commentable_id'=>$project->id,
-            'commentable_type'=>Project::class,
-            'body'=>'Modification comment here',
-        ]);
+            $response = $this->putJson("/api/v1/comment/{$comment->id}", $data);
+            $response->assertStatus(200);
+
+            $this->assertDatabaseHas('comments', [
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Modification comment on {$type}",
+            ]);
+        }
     }
 
-    public function test_authenticated_user_can_update_comment_on_proposal_via_put_method()
+    public function test_authenticated_user_can_update_comment_via_patch_method()
     {
         $user = User::factory()->create();
-        $proposal = Proposal::factory()->create();
-
         Sanctum::actingAs($user, ['update']);
 
-        $comment = Comment::factory()->create([
-            'user_id'=>$user->id,
-            'commentable_id'=>$proposal->id,
-            'commentable_type'=>Proposal::class,
-            'body'=>'Comment on proposal',
-        ]);
-
-        $data = [
-            'user_id'=>$user->id,
-            'commentable_id'=>$proposal->id,
-            'commentable_type'=>Proposal::class,
-            'body'=>'Modification comment on proposal',
+        $models = [
+            [Project::class, 'project'],
+            [Proposal::class, 'proposal'],
         ];
 
-        $response = $this->putJson("/api/v1/comment/{$comment->id}", $data);
+        foreach ($models as [$modelClass, $type]) {
+            $model = $modelClass::factory()->create();
+            
+            $comment = Comment::factory()->create([
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Comment random",
+            ]);
 
-        $response->assertStatus(200);
+            $data = [
+                'body'=>"Modification comment on {$type}",
+            ];
 
-        $this->assertDatabaseHas('comments', [
-            'user_id'=>$user->id,
-            'commentable_id'=>$proposal->id,
-            'commentable_type'=>Proposal::class,
-            'body'=>'Modification comment on proposal',
-        ]);
-    }
+            $response = $this->patchJson("/api/v1/comment/{$comment->id}", $data);
+            $response->assertStatus(200);
 
-    public function test_authenticated_user_can_update_comment_on_project_via_patch_method()
-    {
-        $user = User::factory()->create();
-        $project = Project::factory()->create();
-
-        Sanctum::actingAs($user, ['update']);
-
-        $comment = Comment::factory()->create([
-            'user_id'=>$user->id,
-            'commentable_id'=>$project->id,
-            'commentable_type'=>Project::class,
-            'body'=>'Comment on project',
-        ]);
-
-        $data = [
-            'body'=>'Modification project comment here',
-        ];
-
-        $response = $this->patchJson("/api/v1/comment/{$comment->id}", $data);
-
-        $response->assertStatus(200);
-
-        $this->assertDatabaseHas('comments', [
-            'user_id'=>$user->id,
-            'commentable_id'=>$project->id,
-            'commentable_type'=>Project::class,
-            'body'=>'Modification project comment here',
-        ]);
-    }
-
-    public function test_authenticated_user_can_update_comment_on_proposal_via_patch_method()
-    {
-        $user = User::factory()->create();
-        $proposal = Proposal::factory()->create();
-
-        Sanctum::actingAs($user, ['update']);
-
-        $comment = Comment::factory()->create([
-            'user_id'=>$user->id,
-            'commentable_id'=>$proposal->id,
-            'commentable_type'=>Proposal::class,
-            'body'=>'Comment on proposal',
-        ]);
-
-        $data = [
-            'body'=>'Modification comment on proposal',
-        ];
-
-        $response = $this->patchJson("/api/v1/comment/{$comment->id}", $data);
-
-        $response->assertStatus(200);
-
-        $this->assertDatabaseHas('comments', [
-            'user_id'=>$user->id,
-            'commentable_id'=>$proposal->id,
-            'commentable_type'=>Proposal::class,
-            'body'=>'Modification comment on proposal',
-        ]);
+            $this->assertDatabaseHas('comments', [
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Modification comment on {$type}",
+            ]);
+        }
     }
 
     public function test_authenticated_user_can_delete_comment_on_project()
     {
         $user = User::factory()->create();
-        $project = Project::factory()->create();
-
         Sanctum::actingAs($user, ['delete']);
+        
+        $models = [
+            [Project::class, 'project'],
+            [Proposal::class, 'proposal'],
+        ];
 
-        $comment = Comment::factory()->create([
-            'user_id' => $user->id,
-            'commentable_id'=>$project->id,
-            'commentable_type'=>Project::class,
-            'body'=>'Comment on project',
-        ]);
+        foreach ($models as [$modelClass, $type]) {
+            $model = $modelClass::factory()->create();
+            
+            $comment = Comment::factory()->create([
+                'user_id'=>$user->id,
+                'commentable_id'=>$model->id,
+                'commentable_type'=>$modelClass,
+                'body'=>"Comment on {$type}",
+            ]);
 
-        $response = $this->deleteJson("/api/v1/comment/{$comment->id}");
+            $response = $this->deleteJson("/api/v1/comment/{$comment->id}");
 
-        $response->assertStatus(204); // No Content
+            $response->assertStatus(204); // No Content
 
-        // $response->assertStatus(200);
-        // $response->assertJson(['message' => 'Deleted']);
+            // $response->assertStatus(200);
+            // $response->assertJson(['message' => 'Deleted']);
 
-        $this->assertDatabaseMissing('comments', [
-            'id' => $comment->id,
-        ]);
-    }
-
-    public function test_authenticated_user_can_delete_comment_on_proposal()
-    {
-        $user = User::factory()->create();
-        $proposal = Proposal::factory()->create();
-
-        Sanctum::actingAs($user, ['delete']);
-
-        $comment = Comment::factory()->create([
-            'user_id' => $user->id,
-            'commentable_id'=>$proposal->id,
-            'commentable_type'=>Proposal::class,
-            'body'=>'Comment on project',
-        ]);
-
-        $response = $this->deleteJson("/api/v1/comment/{$comment->id}");
-
-        $response->assertStatus(204); // No Content
-
-        // $response->assertStatus(200);
-        // $response->assertJson(['message' => 'Deleted']);
-
-        $this->assertDatabaseMissing('comments', [
-            'id' => $comment->id,
-        ]);
+            $this->assertDatabaseMissing('comments', [
+                'id' => $comment->id,
+            ]);
+        }
     }
 }

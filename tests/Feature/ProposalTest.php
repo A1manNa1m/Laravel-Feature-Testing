@@ -50,6 +50,52 @@ class ProposalTest extends TestCase
         ]);
     }
 
+    public function test_it_creates_a_proposal_when_all_fields_are_valid()
+    {
+        $user = User::factory()->create();
+        $project = Project::factory()->create();
+
+        Sanctum::actingAs($user, ['create']); //token
+
+        $response = $this->postJson('/api/v1/proposal', [
+            'user_id'=>$user->id,
+            'project_id'=>$project->id,
+            'cover_letter'=>'All fields are valid'
+        ]);
+
+        $response->assertStatus(201); // Created
+        $this->assertDatabaseHas('proposals', [
+            'user_id'=>$user->id,
+            'project_id'=>$project->id,
+            'cover_letter'=>'All fields are valid'
+        ]);
+    }
+
+    public function test_it_returns_validation_errors_when_required_fields_are_missing()
+    {
+        $user = User::factory()->create();
+        $project = Project::factory()->create();
+
+        Sanctum::actingAs($user, ['create']); //token
+
+        $requiredFields = ['user_id', 'project_id','cover_letter'];
+
+        foreach ($requiredFields as $field) {
+            $data = [
+                'user_id'=>$user->id,
+                'project_id'=>$project->id,
+                'cover_letter'=>'All fields are valid'
+            ];
+
+            unset($data[$field]); // Remove the required field we’re testing
+
+            $response = $this->postJson('/api/v1/proposal', $data);
+
+            $response->assertStatus(422);
+            $response->assertJsonValidationErrors($field);
+        }
+    }
+
     public function test_authenticated_user_can_update_proposal_with_put()
     {
         $user = User::factory()->create();
